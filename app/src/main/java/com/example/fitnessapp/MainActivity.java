@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Declare your UI elements
+    // UI elements
     TextView streakText;
     Button workoutBtn, recipesBtn, progressBtn;
 
