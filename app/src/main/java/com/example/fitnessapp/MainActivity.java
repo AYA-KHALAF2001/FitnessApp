@@ -1,7 +1,9 @@
 package com.example.fitnessapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
 
     // UI elements
     TextView streakText;
-    Button workoutBtn, recipesBtn, progressBtn;
+    ImageButton menuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,13 +20,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Link activity_main.XML components to Java
         streakText = findViewById(R.id.streakText);
-        workoutBtn = findViewById(R.id.workoutBtn);
-        recipesBtn = findViewById(R.id.recipesBtn);
-        progressBtn = findViewById(R.id.progressBtn);
 
-        // Button actions
-        workoutBtn.setOnClickListener(v -> streakText.setText("Opening Workout Log"));
-        recipesBtn.setOnClickListener(v -> streakText.setText("Opening Recipes"));
-        progressBtn.setOnClickListener(v -> streakText.setText("Opening Progress Tracker"));
+        menuButton = findViewById(R.id.menuButton);
+
+        menuButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+            startActivity(intent);
+        });
     }
 }
