@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".registerActivity"
+            android:name=".UserPersonalization"
             android:exported="false" />
         <activity
-            android:name=".loginactivity"
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".XPActivty"
@@ -34,7 +37,7 @@
             android:exported="false" />
         <activity android:name=".MenuActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".loginactivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.FitnessApp">

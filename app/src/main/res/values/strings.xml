@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">Fitness App</string>
+    <string name="signup">New user? Click this!</string>
+    <string name="signuphere">New User? Click here to sign up!</string>
+    <string name="welcome">Welcome Back!</string>
+    <string name="userpersonalization">Welcome to user personilzation!</string>
+    <string name="genderhint">Please select your gender from the options below</string>
+    <string name="goalhint">Please select your goals from the options below</string>
+    <string name="exphint">Please select your experience from the options below</string>
+    <string name="agehint">Please enter your age</string>
+    <string name="weighthint">Please enter your current weight</string>
+    <string name="completepersonalization">I\'m all finished! Lets get started!</string>
+
+    <string-array name="gender_options">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Non-binary</item>
+        <item>Prefer not to say</item>
+    </string-array>
+
+    <string-array name="goal_options">
+        <item>Lose weight</item>
+        <item>Build muscle</item>
+        <item>Increase strength</item>
+        <item>Improve endurance</item>
+        <item>General fitness</item>
+    </string-array>
+
+    <string-array name="experience_options">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
+    </string-array>
 </resources>
