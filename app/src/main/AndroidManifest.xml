@@ -11,8 +11,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-        <activity android:name=".MenuActivity"/>
+        <activity
+            android:name=".registerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".loginactivity"
+            android:exported="false" />
+        <activity
+            android:name=".XPActivty"
+            android:exported="false" />
+        <activity
+            android:name=".MealPlanActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WorkoutListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddWorkoutActivity"
+            android:exported="false" />
+        <activity android:name=".MenuActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

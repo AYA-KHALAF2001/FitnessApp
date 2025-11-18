@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".loginactivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/fitnessapp_logo.png">
+
+    </ImageView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+
+    </TextView>
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        android:la
+
+    </EditText>
+
+    <EditText
+        android:layout_width=""
+        android:layout_height="">
+
+    </EditText>
+
+
+    <Button
+        android:layout_width=""
+        android:layout_height="">
+
+
+    </Button>
+
+    <TextView
+        android:layout_width=""
+        android:layout_height="">
+
+    </TextView>
+
+    <Button
+        android:layout_width=""
+        android:layout_height="">
+
+
+
+    </Button>
+
+
+    
+    
+    
+    
+    
+    
+
+</androidx.constraintlayout.widget.ConstraintLayout>
