@@ -17,7 +17,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText editUsername, editEmail, editPassword;
     Button buttonRegister;
-
+// firebase
     FirebaseAuth auth;
     FirebaseFirestore db;
 
