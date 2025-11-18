@@ -38,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createAccount() {
+        Toast.makeText(this, "Starting account creation...", Toast.LENGTH_SHORT).show();
         String username = editUsername.getText().toString();
         String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
@@ -49,11 +50,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
+                    Toast.makeText(this, "Firebase created user!", Toast.LENGTH_SHORT).show();
                     String userID = result.getUser().getUid();
                     User user = new User(userID, username, email);
 
                     db.collection("users").document(userID).set(user)
                             .addOnSuccessListener(v -> {
+                                Toast.makeText(this, "Firestore user saved!", Toast.LENGTH_SHORT).show();
                                 new android.app.AlertDialog.Builder(this)
                                         .setTitle("Success!")
                                         .setMessage("Account created successfully.\nRedirecting you to personalization…")
