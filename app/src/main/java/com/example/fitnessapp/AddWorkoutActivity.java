@@ -22,3 +22,4 @@ public class AddWorkoutActivity extends AppCompatActivity {
         });
     }
 }
+

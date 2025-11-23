@@ -8,7 +8,20 @@ android {
     namespace "com.example.fitnessapp"
     compileSdk 36
 
+    buildFeatures {
+        buildConfig = true
+    }
+
+    def localProps = new Properties()
+    def localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        localProps.load(new FileInputStream(localPropsFile))
+    }
+
+    def openaiKey = localProps.getProperty("OPENAI_API_KEY", "")
+
     defaultConfig {
+        buildConfigField "String", "OPENAI_API_KEY", "\"${openaiKey}\""
         applicationId "com.example.fitnessapp"
         minSdk 24
         targetSdk 36
@@ -52,6 +65,11 @@ dependencies {
     implementation "com.google.firebase:firebase-auth"
     implementation "com.google.firebase:firebase-firestore"
     implementation "com.google.firebase:firebase-analytics"
+    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
+
 
 
     testImplementation libs.junit

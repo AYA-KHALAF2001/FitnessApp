@@ -1,24 +1,325 @@
 package com.example.fitnessapp;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import com.example.fitnessapp.adapters.WeeklyPlanAdapter;
+import com.example.fitnessapp.models.DayPlan;
+import com.example.fitnessapp.models.Exercise;
+import com.example.fitnessapp.models.Meal;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class WorkoutListActivity extends AppCompatActivity {
+
+    private ProgressBar loading;
+    private RecyclerView recycler;
+    private Button mealsBtn;
+
+    private FirebaseFirestore db;
+    private String userID;
+
+    private String experience = "Beginner";
+    private String goal = "General fitness";
+
+    private int xp = 0;
+    private int level = 1;
+
+    private String weekJsonString = null;
+    private final String model = "gpt-4o-mini";
+
+    private List<DayPlan> cachedPlans = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_workout_list);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        loading = findViewById(R.id.loading);
+        recycler = findViewById(R.id.recyclerWeeklyPlan);
+        mealsBtn = findViewById(R.id.buttonOpenMeals);
+
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+
+        db = FirebaseFirestore.getInstance();
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        Log.e("API_KEY_TEST", "Using API Key: " + BuildConfig.OPENAI_API_KEY);
+
+        // 🔥 TEST OpenAI connection immediately
+        testOpenAIConnection();
+
+        mealsBtn.setOnClickListener(v -> {
+            if (cachedPlans.isEmpty()) {
+                Toast.makeText(this, "Plan not ready yet.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            List<Meal> meals = new ArrayList<>();
+            for (DayPlan dp : cachedPlans) {
+                meals.add(dp.getMeal());
+            }
+
+            Intent i = new Intent(this, MealPlanActivity.class);
+            i.putExtra("MEAL_LIST", new Gson().toJson(meals));
+            startActivity(i);
         });
+
+        loadUserData();
+    }
+
+    // 🔍 TEST basic connection to OpenAI
+    private void testOpenAIConnection() {
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(20, TimeUnit.SECONDS)
+                        .readTimeout(20, TimeUnit.SECONDS)
+                        .writeTimeout(20, TimeUnit.SECONDS)
+                        .build();
+
+                Request req = new Request.Builder()
+                        .url("https://api.openai.com/v1/models")
+                        .addHeader("Authorization", "Bearer " + BuildConfig.OPENAI_API_KEY)
+                        .build();
+
+                okhttp3.Response res = client.newCall(req).execute();
+                String body = res.body().string();
+
+                Log.e("TEST_OPENAI", "Response: " + body);
+
+            } catch (Exception e) {
+                Log.e("TEST_OPENAI", "Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    private void loadUserData() {
+        db.collection("users").document(userID).get()
+                .addOnSuccessListener(doc -> {
+                    experience = doc.getString("experience");
+                    goal = doc.getString("goal");
+
+                    xp = doc.getLong("xp") != null ? doc.getLong("xp").intValue() : 0;
+                    level = doc.getLong("level") != null ? doc.getLong("level").intValue() : 1;
+
+                    generateGPTPlan();
+                })
+                .addOnFailureListener(e -> generateGPTPlan());
+    }
+
+    private void generateGPTPlan() {
+        loading.setVisibility(View.VISIBLE);
+
+        new Thread(() -> {
+            try {
+
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(20, TimeUnit.SECONDS)
+                        .readTimeout(20, TimeUnit.SECONDS)
+                        .writeTimeout(20, TimeUnit.SECONDS)
+                        .build();
+
+                String requestBody = generatePromptJson();
+
+                Request req = new Request.Builder()
+                        .url("https://api.openai.com/v1/chat/completions")
+                        .addHeader("Authorization", "Bearer " + BuildConfig.OPENAI_API_KEY)
+                        .addHeader("Content-Type", "application/json")
+                        .post(RequestBody.create(requestBody, MediaType.parse("application/json")))
+                        .build();
+
+                okhttp3.Response res = client.newCall(req).execute();
+                String body = res.body().string();
+
+                Log.e("GPT_RAW", "Response: " + body);
+
+                JSONObject root = new JSONObject(body);
+                if (!root.has("choices")) {
+                    runOnUiThread(() ->
+                            Toast.makeText(this, "GPT returned no choices", Toast.LENGTH_LONG).show()
+                    );
+                    return;
+                }
+
+                String content = root.getJSONArray("choices")
+                        .getJSONObject(0)
+                        .getJSONObject("message")
+                        .getString("content");
+
+                weekJsonString = content;
+
+                List<DayPlan> plans = parseWeek(content);
+                cachedPlans = plans;
+
+                runOnUiThread(() -> {
+                    loading.setVisibility(View.GONE);
+                    recycler.setAdapter(new WeeklyPlanAdapter(plans, day -> {
+                        awardXP();
+                        updateStreak();
+                        Toast.makeText(this, "Workout completed!", Toast.LENGTH_SHORT).show();
+                    }));
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() ->
+                        Toast.makeText(this, "GPT Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
+            }
+        }).start();
+    }
+
+    private String generatePromptJson() {
+        try {
+            JSONObject root = new JSONObject();
+            root.put("model", model);
+
+            JSONObject rf = new JSONObject();
+            rf.put("type", "json_object");
+            root.put("response_format", rf);
+
+            JSONArray msgs = new JSONArray();
+            JSONObject user = new JSONObject();
+
+            String prompt =
+                    "Return ONLY valid JSON.\n" +
+                            "{ \"week\": [ { \"day\": \"Monday\", \"workout\": [{\"exercise\":\"Push-ups\",\"sets\":3,\"reps\":\"12\",\"rest\":\"60s\"}], \"meal\": {\"name\":\"Chicken Bowl\",\"calories\":550,\"protein\":40,\"carbs\":60,\"fat\":15} } ] }\n" +
+                            "Rules: 7 days, 3–5 exercises per day, include meal macros, no markdown.";
+
+            user.put("role", "user");
+            user.put("content", prompt);
+            msgs.put(user);
+
+            root.put("messages", msgs);
+
+            return root.toString();
+
+        } catch (Exception e) {
+            return "{}";
+        }
+    }
+
+    private List<DayPlan> parseWeek(String jsonString) throws Exception {
+
+        JSONObject root = new JSONObject(jsonString);
+        JSONArray weekArr = root.getJSONArray("week");
+
+        List<DayPlan> days = new ArrayList<>();
+
+        for (int i = 0; i < weekArr.length(); i++) {
+            JSONObject d = weekArr.getJSONObject(i);
+
+            String dayName = d.getString("day");
+
+            JSONArray workoutArr = d.getJSONArray("workout");
+            List<Exercise> exList = new ArrayList<>();
+
+            for (int j = 0; j < workoutArr.length(); j++) {
+                JSONObject e = workoutArr.getJSONObject(j);
+
+                String exerciseName = e.optString("exercise", "Unknown");
+                int sets = e.optInt("sets", 0);
+
+                // Accept reps OR duration
+                String repsOrDuration = "";
+                if (e.has("reps")) {
+                    repsOrDuration = e.optString("reps", "");
+                } else if (e.has("duration")) {
+                    repsOrDuration = e.optString("duration", "");
+                } else {
+                    repsOrDuration = "N/A";
+                }
+
+                String rest = e.optString("rest", "60s");
+
+                exList.add(new Exercise(
+                        exerciseName,
+                        sets,
+                        repsOrDuration,
+                        rest
+                ));
+            }
+
+            JSONObject mealObj = d.getJSONObject("meal");
+            Meal meal = new Meal(
+                    mealObj.optString("name", "Unknown Meal"),
+                    mealObj.optInt("calories", 0),
+                    mealObj.optInt("protein", 0),
+                    mealObj.optInt("carbs", 0),
+                    mealObj.optInt("fat", 0)
+            );
+
+            days.add(new DayPlan(dayName, exList, meal));
+        }
+
+        return days;
+    }
+
+
+    private void awardXP() {
+        int gained = 50;
+        xp += gained;
+
+        int required = level * 200;
+
+        if (xp >= required) {
+            xp -= required;
+            level++;
+            runOnUiThread(() ->
+                    Toast.makeText(this, "LEVEL UP! Level " + level, Toast.LENGTH_LONG).show()
+            );
+        }
+
+        db.collection("users").document(userID)
+                .update("xp", xp, "level", level);
+    }
+
+    private void updateStreak() {
+        String today = LocalDate.now().toString();
+
+        db.collection("users").document(userID).get()
+                .addOnSuccessListener(doc -> {
+
+                    String last = doc.getString("last_workout_date");
+                    int streak = doc.getLong("current_streak") != null
+                            ? doc.getLong("current_streak").intValue()
+                            : 0;
+
+                    if (last == null) {
+                        streak = 1;
+                    } else {
+                        LocalDate lastDate = LocalDate.parse(last);
+                        LocalDate now = LocalDate.parse(today);
+
+                        if (lastDate.plusDays(1).isEqual(now)) streak++;
+                        else if (!lastDate.isEqual(now)) streak = 1;
+                    }
+
+                    db.collection("users").document(userID)
+                            .update("current_streak", streak, "last_workout_date", today);
+                });
     }
 }

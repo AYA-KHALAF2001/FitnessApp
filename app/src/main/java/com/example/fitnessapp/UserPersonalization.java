@@ -26,6 +26,10 @@ public class UserPersonalization extends AppCompatActivity {
     private String selectedGoal = "";
     private String selectedExperience = "";
 
+    private int xp = 0;
+    private int level = 0;
+    private String prev_workout_day = "";
+
 
     Button userpersonalcontinue;
 
@@ -59,7 +63,10 @@ public class UserPersonalization extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
                 selectedGender = adapter.getItemAtPosition(position).toString();
             }
-            @Override public void onNothingSelected(AdapterView<?> adapter) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {
+            }
         });
 
         spinnerGoal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -67,7 +74,10 @@ public class UserPersonalization extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
                 selectedGoal = adapter.getItemAtPosition(position).toString();
             }
-            @Override public void onNothingSelected(AdapterView<?> adapter) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {
+            }
         });
 
         spinnerExperience.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -75,19 +85,22 @@ public class UserPersonalization extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
                 selectedExperience = adapter.getItemAtPosition(position).toString();
             }
-            @Override public void onNothingSelected(AdapterView<?> adapter) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {
+            }
         });
 
 
-
         userpersonalcontinue = findViewById(R.id.userpersonalcontinue);
-        userpersonalcontinue.setOnClickListener(v-> personalizeAccount());
+        userpersonalcontinue.setOnClickListener(v -> personalizeAccount());
 
     }
 
 
-    private void personalizeAccount(){
-        Toast.makeText(this,"Updating account data...", Toast.LENGTH_SHORT).show();
+    private void personalizeAccount() {
+        Toast.makeText(this, "Updating account data...", Toast.LENGTH_SHORT).show();
+
         int age = Integer.parseInt(editAge.getText().toString().trim());
         int weight = Integer.parseInt(editWeight.getText().toString().trim());
         int height = Integer.parseInt(editHeight.getText().toString().trim());
@@ -105,7 +118,7 @@ public class UserPersonalization extends AppCompatActivity {
                 .addOnSuccessListener(v -> {
                     Toast.makeText(this, "Personalization complete!", Toast.LENGTH_SHORT).show();
 
-                    Intent i = new Intent(UserPersonalization.this, MenuActivity.class);
+                    Intent i = new Intent(UserPersonalization.this, MainActivity.class);
                     startActivity(i);
                     finish();
                 })
@@ -114,4 +127,5 @@ public class UserPersonalization extends AppCompatActivity {
                     Log.e("FIRESTORE", "Update failed", e);
                 });
     }
+
 }

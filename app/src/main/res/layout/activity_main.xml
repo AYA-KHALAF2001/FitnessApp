@@ -5,9 +5,41 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:textStyle="bold"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:padding="20dp">
 
-    <!-- Title -->
+    <!-- TOP TOOLBAR -->
+    <LinearLayout
+        android:id="@+id/topToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/buttonWorkouts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Workouts" />
+
+        <Button
+            android:id="@+id/buttonMeals"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Meals" />
+
+        <Button
+            android:id="@+id/buttonWeekPlan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Weekly Plan" />
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
@@ -16,9 +48,41 @@
         android:textSize="50sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:textColor="#FF000000" />
+        android:textColor="#FF000000"
+        android:layout_marginTop="10dp" />
 
-    <!-- Current Streak Display -->
+
+    <TextView
+        android:id="@+id/levelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Level 1"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:textColor="#000000"
+        android:layout_marginTop="10dp"/>
+
+
+    <ProgressBar
+        android:id="@+id/xpProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="250dp"
+        android:layout_height="25dp"
+        android:progress="0"
+        android:max="100"
+        android:layout_marginTop="10dp" />
+
+
+    <TextView
+        android:id="@+id/xpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 / 100 XP"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginTop="5dp"/>
+
+
     <TextView
         android:id="@+id/streakText"
         android:layout_width="wrap_content"
@@ -27,27 +91,6 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="#FF3700B3"
-        android:layout_marginBottom="20dp"/>
-
-    <ImageButton
-        android:id="@+id/menuButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_menu"
-        android:contentDescription="Menu" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start your journey here !"
-        android:textStyle="italic"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#FF000000"
-        android:textSize="16sp" />
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>

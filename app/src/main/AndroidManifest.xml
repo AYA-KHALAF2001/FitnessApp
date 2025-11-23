@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
+            android:name=".Exercise"
+            android:exported="false" />
+        <activity
             android:name=".UserPersonalization"
             android:exported="true" />
         <activity
