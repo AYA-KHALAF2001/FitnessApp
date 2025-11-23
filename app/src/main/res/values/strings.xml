@@ -10,6 +10,7 @@
     <string name="agehint">Please enter your age</string>
     <string name="weighthint">Please enter your current weight</string>
     <string name="completepersonalization">I\'m all finished! Lets get started!</string>
+    <string name="ageheight">Please enter your current height (inches)</string>
 
     <string-array name="gender_options">
         <item>Male</item>
