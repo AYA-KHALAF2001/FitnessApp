@@ -11,6 +11,7 @@ import com.example.fitnessapp.models.Meal;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MealPlanActivity extends AppCompatActivity {
@@ -27,9 +28,16 @@ public class MealPlanActivity extends AppCompatActivity {
 
         String jsonMeals = getIntent().getStringExtra("mealList");
 
-        List<Meal> meals = new Gson().fromJson(jsonMeals, new TypeToken<List<Meal>>(){}.getType());
+        List<Meal> meals;
+
+        if (jsonMeals == null || jsonMeals.isEmpty()) {
+            meals = new ArrayList<>();
+        } else {
+            meals = new Gson().fromJson(jsonMeals, new TypeToken<List<Meal>>(){}.getType());
+        }
 
         MealAdapter adapter = new MealAdapter(meals);
+
         recyclerMeals.setAdapter(adapter);
     }
 }

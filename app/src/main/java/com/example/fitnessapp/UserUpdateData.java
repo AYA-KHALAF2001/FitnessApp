@@ -18,9 +18,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserPersonalization extends AppCompatActivity {
+public class UserUpdateData extends AppCompatActivity {
 
     EditText editAge, editWeight, editHeight;
+    Spinner spinnerGender, spinnerGoal, spinnerExperience;
+
     private String selectedGender = "";
     private String selectedGoal = "";
     private String selectedExperience = "";
@@ -33,7 +35,7 @@ public class UserPersonalization extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_userpersonalization);
+        setContentView(R.layout.activity_user_update_data);
 
         db = FirebaseFirestore.getInstance();
 
@@ -51,9 +53,12 @@ public class UserPersonalization extends AppCompatActivity {
         editAge = findViewById(R.id.editAge);
         editWeight = findViewById(R.id.editWeight);
         editHeight = findViewById(R.id.editHeight);
-        Spinner spinnerGender = findViewById(R.id.editspinnerGender);
-        Spinner spinnerGoal = findViewById(R.id.editSpinnerGoal);
-        Spinner spinnerExperience = findViewById(R.id.editSpinnerExperience);
+
+        spinnerGender = findViewById(R.id.editspinnerGender);
+        spinnerGoal = findViewById(R.id.editSpinnerGoal);
+        spinnerExperience = findViewById(R.id.editSpinnerExperience);
+
+        loadExistingUserData();
 
         spinnerGender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
@@ -78,6 +83,47 @@ public class UserPersonalization extends AppCompatActivity {
 
         userpersonalcontinue = findViewById(R.id.userpersonalcontinue);
         userpersonalcontinue.setOnClickListener(v -> personalizeAccount());
+    }
+
+    private void loadExistingUserData() {
+        db.collection("users").document(userID)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+
+                    try {
+                        if (doc.getLong("age") != null)
+                            editAge.setText(String.valueOf(doc.getLong("age")));
+
+                        if (doc.getLong("weight") != null)
+                            editWeight.setText(String.valueOf(doc.getLong("weight")));
+
+                        if (doc.getLong("height") != null)
+                            editHeight.setText(String.valueOf(doc.getLong("height")));
+
+                        if (doc.getString("gender") != null)
+                            setSpinnerSelection(spinnerGender, doc.getString("gender"));
+
+                        if (doc.getString("goal") != null)
+                            setSpinnerSelection(spinnerGoal, doc.getString("goal"));
+
+                        if (doc.getString("experience") != null)
+                            setSpinnerSelection(spinnerExperience, doc.getString("experience"));
+
+                    } catch (Exception e) {
+                        Log.e("UPDATE_DATA", "Prefill error", e);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("UPDATE_DATA", "Failed to load existing data", e));
+    }
+
+    private void setSpinnerSelection(Spinner spinner, String value) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(value)) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 
     private void personalizeAccount() {
@@ -108,9 +154,8 @@ public class UserPersonalization extends AppCompatActivity {
         db.collection("users").document(userID)
                 .update(updates)
                 .addOnSuccessListener(v -> {
-                    Toast.makeText(this, "Personalization complete!", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(UserPersonalization.this, MainActivity.class);
-                    startActivity(i);
+                    Toast.makeText(this, "Update complete!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(UserUpdateData.this, MainActivity.class));
                     finish();
                 })
                 .addOnFailureListener(e -> {

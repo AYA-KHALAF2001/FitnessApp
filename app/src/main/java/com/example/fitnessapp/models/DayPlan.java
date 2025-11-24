@@ -10,7 +10,7 @@ public class DayPlan {
     public boolean completed;
 
     public DayPlan() {
-        // Required for Firestore or JSON
+        // Required for Firestore
     }
 
     public DayPlan(String dayName, List<Exercise> exercises, Meal meal) {
@@ -20,16 +20,16 @@ public class DayPlan {
         this.completed = false;
     }
 
-    public Meal getMeal() {
-        return meal;
-    }
-
     public String getDay() {
         return day;
     }
 
     public List<Exercise> getWorkout() {
         return workout;
+    }
+
+    public Meal getMeal() {
+        return meal;
     }
 
     public boolean isCompleted() {

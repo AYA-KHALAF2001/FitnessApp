@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     TextView streakText, xpText, levelText;
     ProgressBar xpProgress;
 
-    Button buttonWorkouts, buttonMeals, buttonWeekPlan;
+    Button buttonWorkouts, buttonRank, buttonUserUpdateData;
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -34,34 +34,29 @@ public class MainActivity extends AppCompatActivity {
         xpProgress = findViewById(R.id.xpProgress);
 
         buttonWorkouts = findViewById(R.id.buttonWorkouts);
-        buttonMeals = findViewById(R.id.buttonMeals);
-        buttonWeekPlan = findViewById(R.id.buttonWeekPlan);
+        buttonRank = findViewById(R.id.buttonRank);
+        buttonUserUpdateData = findViewById(R.id.buttonUserUpdateData);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         userID = auth.getCurrentUser().getUid();
 
-        loadUserData();
-
-        buttonWorkouts.setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, WorkoutListActivity.class)));
-
-        buttonMeals.setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, MealPlanActivity.class)));
-
-        buttonWeekPlan.setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, WorkoutListActivity.class))); // same weekly plan
-    }
-
-    private void loadUserData() {
         db.collection("users").document(userID)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (!doc.exists()) return;
+                .addSnapshotListener((doc, error) -> {
+                    if (error != null || doc == null || !doc.exists()) return;
 
                     long xp = doc.getLong("xp") != null ? doc.getLong("xp") : 0;
                     long level = doc.getLong("level") != null ? doc.getLong("level") : 1;
                     long streak = doc.getLong("current_streak") != null ? doc.getLong("current_streak") : 0;
+
+                    long required = level * 100;
+
+                    if (xp >= required) {
+                        xp = 0;
+                        level++;
+                        db.collection("users").document(userID)
+                                .update("xp", xp, "level", level);
+                    }
 
                     int xpCap = (int) (level * 100);
 
@@ -71,7 +66,18 @@ public class MainActivity extends AppCompatActivity {
                     xpText.setText(xp + " / " + xpCap + " XP");
                     levelText.setText("Level " + level);
                     streakText.setText("Current Streak: " + streak + " days");
-                })
-                .addOnFailureListener(e -> Log.e("MAIN", "Failed to load user data", e));
+                });
+
+        buttonWorkouts.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, WorkoutListActivity.class)));
+
+        buttonRank.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, XpActivity.class)));
+
+        buttonUserUpdateData.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, UserUpdateData.class);
+            i.putExtra("USER_ID", userID);
+            startActivity(i);
+        });
     }
 }

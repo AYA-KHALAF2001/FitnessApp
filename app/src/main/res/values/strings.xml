@@ -11,6 +11,14 @@
     <string name="weighthint">Please enter your current weight</string>
     <string name="completepersonalization">I\'m all finished! Lets get started!</string>
     <string name="ageheight">Please enter your current height (inches)</string>
+    <string name="agehintupdate">Happy Birthday! Enter new age</string>
+    <string name="userpersonalizationupdate">Update your profile</string>
+    <string name="weighthintupdate">Any weight changes. Update here (lbs)</string>
+    <string name="ageheightupdate">Any height changes. Update here (inches)</string>
+    <string name="genderhintupdate">Choose gender</string>
+    <string name="goalhintupdate">Any goal changes? Update here</string>
+    <string name="exphintupdate">Getting Easier? Change experience here</string>
+    <string name="completepersonalizationupdate">I\'ve updated all my data! Let\'s get back to leveling up!</string>
 
     <string-array name="gender_options">
         <item>Male</item>

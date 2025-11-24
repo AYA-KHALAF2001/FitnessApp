@@ -1,10 +1,8 @@
 package com.example.fitnessapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -14,7 +12,6 @@ import com.example.fitnessapp.models.Exercise;
 import com.example.fitnessapp.models.Meal;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,7 +34,6 @@ public class WorkoutListActivity extends AppCompatActivity {
 
     private ProgressBar loading;
     private RecyclerView recycler;
-    private Button mealsBtn;
 
     private FirebaseFirestore db;
     private String userID;
@@ -48,7 +44,6 @@ public class WorkoutListActivity extends AppCompatActivity {
     private int xp = 0;
     private int level = 1;
 
-    private String weekJsonString = null;
     private final String model = "gpt-4o-mini";
 
     private List<DayPlan> cachedPlans = new ArrayList<>();
@@ -60,61 +55,13 @@ public class WorkoutListActivity extends AppCompatActivity {
 
         loading = findViewById(R.id.loading);
         recycler = findViewById(R.id.recyclerWeeklyPlan);
-        mealsBtn = findViewById(R.id.buttonOpenMeals);
 
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
         db = FirebaseFirestore.getInstance();
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        Log.e("API_KEY_TEST", "Using API Key: " + BuildConfig.OPENAI_API_KEY);
-
-        // 🔥 TEST OpenAI connection immediately
-        testOpenAIConnection();
-
-        mealsBtn.setOnClickListener(v -> {
-            if (cachedPlans.isEmpty()) {
-                Toast.makeText(this, "Plan not ready yet.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            List<Meal> meals = new ArrayList<>();
-            for (DayPlan dp : cachedPlans) {
-                meals.add(dp.getMeal());
-            }
-
-            Intent i = new Intent(this, MealPlanActivity.class);
-            i.putExtra("MEAL_LIST", new Gson().toJson(meals));
-            startActivity(i);
-        });
-
-        loadUserData();
-    }
-
-    // 🔍 TEST basic connection to OpenAI
-    private void testOpenAIConnection() {
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(20, TimeUnit.SECONDS)
-                        .readTimeout(20, TimeUnit.SECONDS)
-                        .writeTimeout(20, TimeUnit.SECONDS)
-                        .build();
-
-                Request req = new Request.Builder()
-                        .url("https://api.openai.com/v1/models")
-                        .addHeader("Authorization", "Bearer " + BuildConfig.OPENAI_API_KEY)
-                        .build();
-
-                okhttp3.Response res = client.newCall(req).execute();
-                String body = res.body().string();
-
-                Log.e("TEST_OPENAI", "Response: " + body);
-
-            } catch (Exception e) {
-                Log.e("TEST_OPENAI", "Error: " + e.getMessage());
-            }
-        }).start();
+        new android.os.Handler().postDelayed(this::loadUserData, 300);
     }
 
     private void loadUserData() {
@@ -126,21 +73,32 @@ public class WorkoutListActivity extends AppCompatActivity {
                     xp = doc.getLong("xp") != null ? doc.getLong("xp").intValue() : 0;
                     level = doc.getLong("level") != null ? doc.getLong("level").intValue() : 1;
 
+                    if (xp >= level * 100) {
+                        level++;
+                        xp = 0;
+
+                        db.collection("users").document(userID)
+                                .update("xp", xp, "level", level);
+                    }
+
                     generateGPTPlan();
                 })
                 .addOnFailureListener(e -> generateGPTPlan());
     }
+
+
+
+
 
     private void generateGPTPlan() {
         loading.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
             try {
-
                 OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(20, TimeUnit.SECONDS)
-                        .readTimeout(20, TimeUnit.SECONDS)
-                        .writeTimeout(20, TimeUnit.SECONDS)
+                        .connectTimeout(120, TimeUnit.SECONDS)
+                        .readTimeout(120, TimeUnit.SECONDS)
+                        .writeTimeout(120, TimeUnit.SECONDS)
                         .build();
 
                 String requestBody = generatePromptJson();
@@ -155,7 +113,7 @@ public class WorkoutListActivity extends AppCompatActivity {
                 okhttp3.Response res = client.newCall(req).execute();
                 String body = res.body().string();
 
-                Log.e("GPT_RAW", "Response: " + body);
+                Log.e("GPT_RAW", "Received GPT response");
 
                 JSONObject root = new JSONObject(body);
                 if (!root.has("choices")) {
@@ -169,8 +127,6 @@ public class WorkoutListActivity extends AppCompatActivity {
                         .getJSONObject(0)
                         .getJSONObject("message")
                         .getString("content");
-
-                weekJsonString = content;
 
                 List<DayPlan> plans = parseWeek(content);
                 cachedPlans = plans;
@@ -243,24 +199,18 @@ public class WorkoutListActivity extends AppCompatActivity {
                 String exerciseName = e.optString("exercise", "Unknown");
                 int sets = e.optInt("sets", 0);
 
-                // Accept reps OR duration
-                String repsOrDuration = "";
+                String repsOrDuration;
                 if (e.has("reps")) {
                     repsOrDuration = e.optString("reps", "");
                 } else if (e.has("duration")) {
                     repsOrDuration = e.optString("duration", "");
                 } else {
-                    repsOrDuration = "N/A";
+                    repsOrDuration = "As many or as long as possible";
                 }
 
                 String rest = e.optString("rest", "60s");
 
-                exList.add(new Exercise(
-                        exerciseName,
-                        sets,
-                        repsOrDuration,
-                        rest
-                ));
+                exList.add(new Exercise(exerciseName, sets, repsOrDuration, rest));
             }
 
             JSONObject mealObj = d.getJSONObject("meal");
@@ -278,24 +228,21 @@ public class WorkoutListActivity extends AppCompatActivity {
         return days;
     }
 
-
     private void awardXP() {
-        int gained = 50;
-        xp += gained;
+        xp += 50;
 
-        int required = level * 200;
+        int required = level * 100;
 
         if (xp >= required) {
-            xp -= required;
             level++;
-            runOnUiThread(() ->
-                    Toast.makeText(this, "LEVEL UP! Level " + level, Toast.LENGTH_LONG).show()
-            );
+            xp = 0;
         }
 
         db.collection("users").document(userID)
-                .update("xp", xp, "level", level);
+                .update("xp", xp, "level", level)
+                .addOnSuccessListener(unused -> Log.e("XP", "XP updated: " + xp + " level: " + level));
     }
+
 
     private void updateStreak() {
         String today = LocalDate.now().toString();

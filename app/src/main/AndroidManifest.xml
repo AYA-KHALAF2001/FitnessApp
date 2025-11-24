@@ -12,8 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".Exercise"
+            android:name=".UserUpdateData"
             android:exported="false" />
+
         <activity
             android:name=".UserPersonalization"
             android:exported="true" />
@@ -24,21 +25,14 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".XPActivty"
+            android:name=".XpActivity"
             android:exported="false" />
         <activity
             android:name=".MealPlanActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
-        <activity
             android:name=".WorkoutListActivity"
             android:exported="false" />
-        <activity
-            android:name=".AddWorkoutActivity"
-            android:exported="false" />
-        <activity android:name=".MenuActivity" />
         <activity
             android:name=".loginactivity"
             android:exported="true"
