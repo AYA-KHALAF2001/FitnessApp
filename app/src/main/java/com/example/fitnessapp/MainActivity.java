@@ -2,11 +2,13 @@ package com.example.fitnessapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import android.view.Menu;
+import android.view.MenuItem;
+import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
     TextView streakText, xpText, levelText;
     ProgressBar xpProgress;
 
-    Button buttonWorkouts, buttonRank, buttonUserUpdateData;
-
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
@@ -28,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.mainToolbar);
+        setSupportActionBar(toolbar);
+
         streakText = findViewById(R.id.streakText);
         xpText = findViewById(R.id.xpText);
         levelText = findViewById(R.id.levelText);
         xpProgress = findViewById(R.id.xpProgress);
 
-        buttonWorkouts = findViewById(R.id.buttonWorkouts);
-        buttonRank = findViewById(R.id.buttonRank);
-        buttonUserUpdateData = findViewById(R.id.buttonUserUpdateData);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -67,17 +67,37 @@ public class MainActivity extends AppCompatActivity {
                     levelText.setText("Level " + level);
                     streakText.setText("Current Streak: " + streak + " days");
                 });
+    }
 
-        buttonWorkouts.setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, WorkoutListActivity.class)));
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+        }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-        buttonRank.setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, XpActivity.class)));
+        int id = item.getItemId();
 
-        buttonUserUpdateData.setOnClickListener(v -> {
+        if (id == R.id.menu_workout) {
+            startActivity(new Intent(MainActivity.this, WorkoutListActivity.class));
+            return true;
+        }
+
+        if (id == R.id.menu_update_user) {
             Intent i = new Intent(MainActivity.this, UserUpdateData.class);
             i.putExtra("USER_ID", userID);
             startActivity(i);
-        });
+            return true;
+        }
+
+        if (id == R.id.menu_progress) {
+            startActivity(new Intent(MainActivity.this, XpActivity.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
+
 }
+

@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import android.content.Intent;
+
 import com.example.fitnessapp.adapters.WeeklyPlanAdapter;
 import com.example.fitnessapp.models.DayPlan;
 import com.example.fitnessapp.models.Exercise;
@@ -85,11 +88,6 @@ public class WorkoutListActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> generateGPTPlan());
     }
-
-
-
-
-
     private void generateGPTPlan() {
         loading.setVisibility(View.VISIBLE);
 
@@ -138,6 +136,22 @@ public class WorkoutListActivity extends AppCompatActivity {
                         updateStreak();
                         Toast.makeText(this, "Workout completed!", Toast.LENGTH_SHORT).show();
                     }));
+                });
+                findViewById(R.id.openMeals).setOnClickListener(v -> {
+
+                    // Convert each day's meal into a list
+                    List<Meal> mealList = new ArrayList<>();
+                    for (DayPlan dp : cachedPlans) {
+                        mealList.add(dp.getMeal());
+                    }
+
+                    // Convert list → JSON
+                    String jsonMeals = new Gson().toJson(mealList);
+
+                    // Open MealPlanActivity
+                    Intent i = new Intent(WorkoutListActivity.this, MealPlanActivity.class);
+                    i.putExtra("mealList", jsonMeals);
+                    startActivity(i);
                 });
 
             } catch (Exception e) {

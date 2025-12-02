@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_workout"
+        android:title="Workouts"
+        android:icon="@drawable/ic_workout"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_update_user"
+        android:title="Update User"
+        android:icon="@drawable/ic_user"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_progress"
+        android:title="Progress"
+        android:icon="@drawable/ic_progress"
+        app:showAsAction="always" />
+</menu>
