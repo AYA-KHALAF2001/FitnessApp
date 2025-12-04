@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">Application Fitness</string>
+    <string name="signup">Nouvel utilisateur ? Cliquez ici !</string>
+    <string name="signuphere">Nouvel utilisateur ? Cliquez ici pour vous inscrire !</string>
+    <string name="welcome">Bon retour !</string>
+    <string name="userpersonalization">Bienvenue dans la personnalisation de votre profil !</string>
+    <string name="genderhint">Veuillez sélectionner votre genre parmi les options ci-dessous</string>
+    <string name="goalhint">Veuillez sélectionner vos objectifs parmi les options ci-dessous</string>
+    <string name="exphint">Veuillez sélectionner votre niveau d\'expérience ci-dessous</string>
+    <string name="agehint">Veuillez entrer votre âge</string>
+    <string name="weighthint">Veuillez entrer votre poids actuel</string>
+    <string name="completepersonalization">J\'ai terminé ! Commençons !</string>
+    <string name="ageheight">Veuillez entrer votre taille actuelle (en pouces)</string>
+    <string name="agehintupdate">Joyeux anniversaire ! Entrez votre nouvel âge</string>
+    <string name="userpersonalizationupdate">Mettre à jour votre profil</string>
+    <string name="weighthintupdate">Changement de poids ? Mettez-le à jour ici (lbs)</string>
+    <string name="ageheightupdate">Changement de taille ? Mettez-le à jour ici (en pouces)</string>
+    <string name="genderhintupdate">Choisir le genre</string>
+    <string name="goalhintupdate">Objectifs modifiés ? Mettez à jour ici</string>
+    <string name="exphintupdate">Ça devient plus facile ? Changez votre niveau ici</string>
+    <string name="completepersonalizationupdate">J\'ai mis à jour mes informations ! Continuons à monter de niveau !</string>
+    <string name="help">Aide</string>
+    <string name="workouts">Entraînements</string>
+    <string name="rankstatus">Rangs et Statut</string>
+    <string name="updateuser">Mettre à jour l\'utilisateur</string>
+
+    <string name="creators"><![CDATA[
+Cette application a été créée par un groupe d\'étudiants de l\'Université Wilfrid Laurier
+Codée par :
+Gabriel Labayan
+Aya Khalaf
+Bilal Asad
+]]></string>
+
+    <string name="helpactivity">Besoin d\'aide ?</string>
+
+    <string name="instructions"><![CDATA[
+1. L\'activité d\'entraînement génère un entraînement personnalisé pour l\'utilisateur
+2. L\'activité des rangs affiche la progression de l\'utilisateur
+3. La personnalisation du profil permet de mettre à jour les informations de l\'utilisateur
+]]></string>
+
+    <string name="gobacktomain">Retour au menu principal</string>
+    <string name="currentversion">Version actuelle : 1.1</string>
+    <string name="gotologin">Retour à la création d\'utilisateur.</string>
+    <string name="signout">Cliquez pour vous déconnecter</string>
+    <string name="returntomain">Page d\'accueil</string>
+
+    <string-array name="gender_options">
+        <item>Homme</item>
+        <item>Femme</item>
+        <item>Non binaire</item>
+        <item>Préfère ne pas répondre</item>
+    </string-array>
+
+    <string-array name="goal_options">
+        <item>Perdre du poids</item>
+        <item>Développer la masse musculaire</item>
+        <item>Augmenter la force</item>
+        <item>Améliorer l\'endurance</item>
+        <item>Forme générale</item>
+    </string-array>
+
+    <string-array name="experience_options">
+        <item>Débutant</item>
+        <item>Intermédiaire</item>
+        <item>Avancé</item>
+    </string-array>
+</resources>

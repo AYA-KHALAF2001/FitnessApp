@@ -1,7 +1,9 @@
 package com.example.fitnessapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ public class XpActivity extends AppCompatActivity {
     FirebaseAuth auth;
     String userID;
 
+    Button Returnmainbutton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,12 +33,15 @@ public class XpActivity extends AppCompatActivity {
         xpStreakText  = findViewById(R.id.xpStreakText);
         xpRankText    = findViewById(R.id.xpRankText);
         xpProgressBar = findViewById(R.id.xpProgressBar);
+        Returnmainbutton = findViewById(R.id.returnButton);
+
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         userID = auth.getCurrentUser().getUid();
 
         loadUserData();
+        Returnmainbutton.setOnClickListener(v -> startActivity(new Intent(XpActivity.this, MainActivity.class)));
     }
 
     private void loadUserData() {

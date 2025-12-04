@@ -19,6 +19,20 @@
     <string name="goalhintupdate">Any goal changes? Update here</string>
     <string name="exphintupdate">Getting Easier? Change experience here</string>
     <string name="completepersonalizationupdate">I\'ve updated all my data! Let\'s get back to leveling up!</string>
+    <string name="help">Help</string>
+    <string name="workouts">Workouts</string>
+    <string name="rankstatus">Ranks and Status</string>
+    <string name="updateuser">Update User</string>
+    <string name="creators">"This app was created by a group of Wilfrid Laurier University Students \n Coded by:\nGabriel Labayan\n Aya Khalaf \nBilal Asad"</string>
+    <string name="helpactivity">Need Help?</string>
+    <string name="instructions">1. Workout Activity is used to generate the personalized workout for the user \n2. The Rank activity is displays user progress \n3. The user personalization is used to update any user changes</string>
+
+    <string name="gobacktomain">Go back to main menu</string>
+    <string name="currentversion">Current Version: 1.1</string>
+    <string name="gotologin">"Go back to user creation. "</string>
+    <string name="signout">Click to logout</string>
+    <string name="returntomain">Home</string>
+
 
     <string-array name="gender_options">
         <item>Male</item>

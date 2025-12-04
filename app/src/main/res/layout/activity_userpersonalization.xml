@@ -109,6 +109,17 @@
         android:entries="@array/experience_options"/>
 
     <Button
+        android:id="@+id/homebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/userpersonalcontinue"
+        android:layout_marginTop="250dp"
+        android:text="@string/gotologin"
+        />
+
+    <Button
         android:id="@+id/userpersonalcontinue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

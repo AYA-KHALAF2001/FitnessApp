@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     TextView streakText, xpText, levelText;
     ProgressBar xpProgress;
 
-    Button buttonWorkouts, buttonRank, buttonUserUpdateData;
+    Button buttonWorkouts, buttonRank, buttonUserUpdateData, buttonHelp,buttonLogout;
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         buttonWorkouts = findViewById(R.id.buttonWorkouts);
         buttonRank = findViewById(R.id.buttonRank);
         buttonUserUpdateData = findViewById(R.id.buttonUserUpdateData);
+        buttonHelp = findViewById(R.id.buttonHelp);
+        buttonLogout = findViewById(R.id.buttonLogout);
+
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -74,10 +77,13 @@ public class MainActivity extends AppCompatActivity {
         buttonRank.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, XpActivity.class)));
 
+        buttonHelp.setOnClickListener(v->startActivity(new Intent(MainActivity.this,HelpActivity.class)));
+        buttonLogout.setOnClickListener(v->startActivity(new Intent(MainActivity.this,loginactivity.class)));
         buttonUserUpdateData.setOnClickListener(v -> {
             Intent i = new Intent(MainActivity.this, UserUpdateData.class);
             i.putExtra("USER_ID", userID);
             startActivity(i);
         });
+
     }
 }

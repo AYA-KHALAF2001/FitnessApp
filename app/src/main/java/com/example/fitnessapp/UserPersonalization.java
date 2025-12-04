@@ -25,7 +25,7 @@ public class UserPersonalization extends AppCompatActivity {
     private String selectedGoal = "";
     private String selectedExperience = "";
 
-    Button userpersonalcontinue;
+    Button userpersonalcontinue,buttonReturn;
 
     FirebaseFirestore db;
     String userID;
@@ -51,33 +51,47 @@ public class UserPersonalization extends AppCompatActivity {
         editAge = findViewById(R.id.editAge);
         editWeight = findViewById(R.id.editWeight);
         editHeight = findViewById(R.id.editHeight);
+        buttonReturn = findViewById(R.id.homebutton);
         Spinner spinnerGender = findViewById(R.id.editspinnerGender);
         Spinner spinnerGoal = findViewById(R.id.editSpinnerGoal);
         Spinner spinnerExperience = findViewById(R.id.editSpinnerExperience);
 
         spinnerGender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
+            @Override
+            public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
                 selectedGender = adapter.getItemAtPosition(position).toString();
             }
-            @Override public void onNothingSelected(AdapterView<?> adapter) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {
+            }
         });
 
         spinnerGoal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
+            @Override
+            public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
                 selectedGoal = adapter.getItemAtPosition(position).toString();
             }
-            @Override public void onNothingSelected(AdapterView<?> adapter) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {
+            }
         });
 
         spinnerExperience.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
+            @Override
+            public void onItemSelected(AdapterView<?> adapter, View view, int position, long id) {
                 selectedExperience = adapter.getItemAtPosition(position).toString();
             }
-            @Override public void onNothingSelected(AdapterView<?> adapter) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {
+            }
         });
 
         userpersonalcontinue = findViewById(R.id.userpersonalcontinue);
         userpersonalcontinue.setOnClickListener(v -> personalizeAccount());
+        buttonReturn.setOnClickListener(v -> startActivity(new Intent(UserPersonalization.this, loginactivity.class)));
     }
 
     private void personalizeAccount() {
@@ -91,31 +105,48 @@ public class UserPersonalization extends AppCompatActivity {
             return;
         }
 
-        int age = Integer.parseInt(ageText);
-        int weight = Integer.parseInt(weightText);
-        int height = Integer.parseInt(heightText);
+        try {
+            int age = Integer.parseInt(ageText);
+            int weight = Integer.parseInt(weightText);
+            int height = Integer.parseInt(heightText);
 
-        Toast.makeText(this, "Updating account data...", Toast.LENGTH_SHORT).show();
+            if (age > 100 || age < 10) {
+                Toast.makeText(this, "Please enter a valid age.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (weight > 700 || weight < 50 ) {
+                Toast.makeText(this, "Please enter a valid weight.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (height > 260 || height < 100) {
+                Toast.makeText(this, "Please enter a valid height.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("age", age);
-        updates.put("weight", weight);
-        updates.put("height", height);
-        updates.put("gender", selectedGender);
-        updates.put("goal", selectedGoal);
-        updates.put("experience", selectedExperience);
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("age", age);
+            updates.put("weight", weight);
+            updates.put("height", height);
+            updates.put("gender", selectedGender);
+            updates.put("goal", selectedGoal);
+            updates.put("experience", selectedExperience);
 
-        db.collection("users").document(userID)
-                .update(updates)
-                .addOnSuccessListener(v -> {
-                    Toast.makeText(this, "Personalization complete!", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(UserPersonalization.this, MainActivity.class);
-                    startActivity(i);
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("FIRESTORE", "Update failed", e);
-                });
+            db.collection("users").document(userID)
+                    .update(updates)
+                    .addOnSuccessListener(v -> {
+                        Toast.makeText(this, "Personalization complete!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, MainActivity.class));
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e("FIRESTORE", "Update failed", e);
+                    });
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Numbers only please!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
+

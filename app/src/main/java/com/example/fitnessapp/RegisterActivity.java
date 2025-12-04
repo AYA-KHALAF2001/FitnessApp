@@ -48,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
                     Toast.makeText(this, "Firebase created user!", Toast.LENGTH_SHORT).show();

@@ -12,9 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
+            android:name=".HelpActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserUpdateData"
             android:exported="false" />
-
         <activity
             android:name=".UserPersonalization"
             android:exported="true" />

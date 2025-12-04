@@ -27,7 +27,7 @@ public class UserUpdateData extends AppCompatActivity {
     private String selectedGoal = "";
     private String selectedExperience = "";
 
-    Button userpersonalcontinue;
+    Button userpersonalcontinue, ButtonReturn;
 
     FirebaseFirestore db;
     String userID;
@@ -83,6 +83,15 @@ public class UserUpdateData extends AppCompatActivity {
 
         userpersonalcontinue = findViewById(R.id.userpersonalcontinue);
         userpersonalcontinue.setOnClickListener(v -> personalizeAccount());
+
+        userpersonalcontinue = findViewById(R.id.userpersonalcontinue);
+        ButtonReturn = findViewById(R.id.returnButton);
+
+        userpersonalcontinue.setOnClickListener(v -> personalizeAccount());
+
+        ButtonReturn.setOnClickListener(v ->
+                startActivity(new Intent(UserUpdateData.this, MainActivity.class))
+        );
     }
 
     private void loadExistingUserData() {
@@ -137,30 +146,46 @@ public class UserUpdateData extends AppCompatActivity {
             return;
         }
 
-        int age = Integer.parseInt(ageText);
-        int weight = Integer.parseInt(weightText);
-        int height = Integer.parseInt(heightText);
+        try {
+            int age = Integer.parseInt(ageText);
+            int weight = Integer.parseInt(weightText);
+            int height = Integer.parseInt(heightText);
 
-        Toast.makeText(this, "Updating account data...", Toast.LENGTH_SHORT).show();
+            if (age > 100 || age < 10) {
+                Toast.makeText(this, "Please enter a valid age.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (weight > 700 || weight < 50) {
+                Toast.makeText(this, "Please enter a valid weight.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (height > 260 || height < 100) {
+                Toast.makeText(this, "Please enter a valid height.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("age", age);
-        updates.put("weight", weight);
-        updates.put("height", height);
-        updates.put("gender", selectedGender);
-        updates.put("goal", selectedGoal);
-        updates.put("experience", selectedExperience);
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("age", age);
+            updates.put("weight", weight);
+            updates.put("height", height);
+            updates.put("gender", selectedGender);
+            updates.put("goal", selectedGoal);
+            updates.put("experience", selectedExperience);
 
-        db.collection("users").document(userID)
-                .update(updates)
-                .addOnSuccessListener(v -> {
-                    Toast.makeText(this, "Update complete!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(UserUpdateData.this, MainActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("FIRESTORE", "Update failed", e);
-                });
+            db.collection("users").document(userID)
+                    .update(updates)
+                    .addOnSuccessListener(v -> {
+                        Toast.makeText(this, "Updates Complete!!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, MainActivity.class));
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e("FIRESTORE", "Update failed", e);
+                    });
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Numbers only please!", Toast.LENGTH_SHORT).show();
+        }
     }
 }

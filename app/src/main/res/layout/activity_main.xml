@@ -22,21 +22,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Workouts" />
+            android:text="@string/workouts" />
 
         <Button
             android:id="@+id/buttonRank"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Rank Status" />
+            android:text="@string/rankstatus" />
 
         <Button
             android:id="@+id/buttonUserUpdateData"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Update User" />
+            android:text="@string/updateuser" />
     </LinearLayout>
 
 
@@ -92,5 +92,18 @@
         android:textStyle="bold"
         android:textColor="#FF3700B3"
         android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/buttonHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help"
+        android:layout_gravity="bottom"/>
+    <Button
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/signout"
+        android:layout_gravity="bottom"/>
 
 </LinearLayout>
