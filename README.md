@@ -3,6 +3,7 @@
 An Android fitness tracker built as a group project for CP470 at Wilfrid Laurier University. Users can log workouts, track progress through an XP/leveling system, maintain daily streaks, and manage their profile — all built as a native Android app.
 
 ## Demo
+<img width="273" height="471" alt="Screenshot 2026-09-15 at 3 51 52 PM" src="https://github.com/user-attachments/assets/276d7613-4da1-497c-9922-df09f45e4831" />
 
 
 ## Features
